@@ -88,10 +88,26 @@
                 return content
             }
 
-
+            var localData = localStorage.getItem("lifetips");
+            var tips;
 
             $(document).ready(function () {
-                var tips = [];
+                try{
+                    if(localData){
+                        tips = JSON.parse(localgit Data);
+                        shuffle(tips).forEach(function (t) {
+                            $('#MyContent').append(chalDataDe(t));
+                        });
+                    }else{
+                        callKrDe();
+                    }
+                }catch(e){
+                    callKrDe();
+                }
+            });
+
+
+            function callKrDe(){
                 $.ajax({
                     type: 'GET',
                     url: 'https://raw.githubusercontent.com/harshyo/tips/master/TIPS.JSON',
@@ -99,16 +115,13 @@
                     async: false,
                     success: function (data) {
                         tips = data.data;
-                        $('#mytitle').html(data.data[0].category_name);
-                        $('.img-responsive').attr('src', data.data[0].category_image);
-                        shuffle(data.data).forEach(function (t) {
+                        localStorage.setItem("lifetips", JSON.stringify(data.data));
+                        shuffle(tips).forEach(function (t) {
                             $('#MyContent').append(chalDataDe(t));
                         });
-
                     }
-
                 });
-            });
+            }
 
         </script>
         <div class="col-sm-6 col-xs-12 cnv-blg">
