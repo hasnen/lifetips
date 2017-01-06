@@ -13,25 +13,27 @@
     <script type="text/javascript" src="asserts/jquery.js"></script>
 </head>
 <body onload="ori_id_ad()">
-<div id="dic_bubble" class="selection_bubble fontSize13 noSelect"
-     style="z-index:9999; border: 1px solid #4AAEDE;fetching=false"></div>
+
 <nav class="navbar navbar-inverse navbar-fixed-top cnv-hdr" role="navigation">
     <div class="container">
         <div class="row">
-            <div class="col-sm-4 col-xs-4 hidden-xs"><a
-                    href="https://itunes.apple.com/in/app/converza-content-discussion/id1029452670?mt=8" target="_blank"
-                    class="cnv-btn-dwnld">
-                <div class="cnv-ios"></div>
-            </a></div>
-            <!--    <div class="col-sm-4 col-xs-4 hidden-xs"><a href="#" class="cnv-btn-dwnld"<button onclick="myFunction()"><img src="?php echo get_site_url(); ?>/wp-content/themes/Landy/img/ios-btn.png" alt="" /></button></a></div> -->
-            <div class="col-sm-4 col-xs-12 text-center cnv-xs-p-0"><a href="#">
-                <div class="cnv-logo"></div>
-            </a></div>
-            <div class="col-sm-4 col-xs-4 cnv-rght-btn hidden-xs"><a
-                    href="https://play.google.com/store/apps/details?id=com.converza" target="_blank"
-                    class="cnv-btn-dwnld">
-                <div class="cnv-android"></div>
-            </a></div>
+            <div class="col-sm-4 col-xs-4 hidden-xs">
+                <a href="https://itunes.apple.com/in/app/converza-content-discussion/id1029452670?mt=8" target="_blank"
+                   class="cnv-btn-dwnld">
+                    <div class="cnv-ios"></div>
+                </a>
+            </div>
+            <div class="col-sm-4 col-xs-12 text-center cnv-xs-p-0">
+                <a href="#">
+                    <div class="cnv-logo"></div>
+                </a>
+            </div>
+            <div class="col-sm-4 col-xs-4 cnv-rght-btn hidden-xs">
+                <a href="https://play.google.com/store/apps/details?id=com.converza" target="_blank"
+                   class="cnv-btn-dwnld">
+                    <div class="cnv-android"></div>
+                </a>
+            </div>
             <div class="clearfix"></div>
         </div>
     </div>
@@ -42,9 +44,52 @@
             <!--advertisement sidebar-->
 
         </div>
-
-
         <script>
+            function shuffle(array) {
+                var currentIndex = array.length, temporaryValue, randomIndex;
+                while (0 !== currentIndex) {
+                    randomIndex = Math.floor(Math.random() * currentIndex);
+                    currentIndex -= 1;
+                    temporaryValue = array[currentIndex];
+                    array[currentIndex] = array[randomIndex];
+                    array[randomIndex] = temporaryValue;
+                }
+                return array;
+            }
+
+            function chalDataDe(a){
+
+
+
+
+                var content = '<div class="clearfix"></div>' +
+                        '<div class="cnv-dsc">' +
+                        '<h1 id="mytitle">'+ a.category_name+'</h1>' +
+                        '</div>' +
+                        '<hr>' +
+                        '<div class="cnv-img">' +
+                        '<img rel="image_src" class="img-responsive" src="'+ a.category_image+'" alt="images">' +
+                        '</div>' +
+                        '<br>' +
+                        '<ol type="i" class="cnv-dsc" id="testDesc1">';
+
+                a.tips.forEach(function (tipTipBarsaPani) {
+                    content += "<li>" + tipTipBarsaPani + "</li>";
+                });
+
+                content+= '</ol>';
+                content += a.category_read_more ? '<div class="pull-left "> Read More: ' +
+                '<a target="_blank" href="'+a.category_read_more+'">'+ a.category_read_more+'</a>' +
+                '</div>' +
+                '<br><hr>' +
+                '<div class="cnv-cmt-sec">' +
+                '</div>' : '';
+
+                return content
+            }
+
+
+
             $(document).ready(function () {
                 var tips = [];
                 $.ajax({
@@ -56,15 +101,10 @@
                         tips = data.data;
                         $('#mytitle').html(data.data[0].category_name);
                         $('.img-responsive').attr('src', data.data[0].category_image);
-                        data.data.forEach(function (t) {
-                            console.log(t);
+                        shuffle(data.data).forEach(function (t) {
+                            $('#MyContent').append(chalDataDe(t));
                         });
-                        console.log(data.data[0].category_read_more);
-                        $('#readMoreLink1').html(data.data[0].category_read_more).attr('href',data.data[0].category_read_more);
 
-                        data.data[0].tips.forEach(function (tipTipBarsaPani) {
-                            $('#testDesc1').append("<li>"+tipTipBarsaPani+"</li>")
-                        })
                     }
 
                 });
@@ -76,34 +116,14 @@
                 <div class="col-xs-6 cnv-xs-dwn-btn"><a href="#" class="cnv-btn-dwnld">
                     <div onclick="myFunction()" class="cnv-ios"></div>
                 </a></div>
-                <div class="col-xs-6 cnv-rght-btn cnv-xs-dwn-btn"><a
-                        href="https://play.google.com/store/apps/details?id=app.lifetips&hl=en" target="_blank"
-                        class="cnv-btn-dwnld">
-                    <div class="cnv-android"></div>
-                </a></div>
+                <div class="col-xs-6 cnv-rght-btn cnv-xs-dwn-btn">
+                    <a href="https://play.google.com/store/apps/details?id=app.lifetips&hl=en" target="_blank"
+                       class="cnv-btn-dwnld">
+                        <div class="cnv-android"></div>
+                    </a>
+                </div>
             </div>
-            <div class="clearfix"></div>
-            <div class="cnv-dsc"><h1 id="mytitle"> Singapore introduces self-driving taxis, world's first public
-                launch</h1></div>
-            <hr>
-
-            <div class="cnv-img">
-                <img rel="image_src" class="img-responsive" src="asserts/1471869363_hqdefault.jpg" alt="images">
-            </div>
-            <br>
-            <ol type="i" class="cnv-dsc" id="testDesc1">
-
-            </ol>
-
-            <div class="pull-left read1"> Read More: <a target="_blank" id="readMoreLink1"
-                                                  href="http://bloom.bg/2bjEc0L">http://bloom.bg/2bjEc0L </a></div>
-            <br>
-
-            <hr>
-
-
-            <div class="cnv-cmt-sec">
-            </div>
+            <div id="MyContent"></div>
         </div>
         <div class="col-xs-3 hidden-xs">
             <!--advertisement sidebar-->
