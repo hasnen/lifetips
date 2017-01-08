@@ -101,12 +101,57 @@
             var currentIndex = -1;
 
             $(document).ready(function () {
+                function getSearchParameters() {
+                    var prmstr = window.location.search.substr(1);
+                    return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+                }
+
+                function transformToAssocArray( prmstr ) {
+                    var params = {};
+                    var prmarr = prmstr.split("&");
+                    for ( var i = 0; i < prmarr.length; i++) {
+                        var tmparr = prmarr[i].split("=");
+                        params[tmparr[0]] = tmparr[1];
+                    }
+                    return params;
+                }
+
+                var params = getSearchParameters();''
+
                 try {
                     if (localData) {
                         tips = JSON.parse(localData);
                         suffeledData = shuffle(tips);
-                        $('#MyContent').append(chalDataDe(suffeledData[0]));
+                        console.log(params.tips);
+                        if(params.tips){
+                            var length = suffeledData.length;
+                            var first;
+                            var second;
+                            suffeledData.forEach(function(data,i){
+                                if(data.url == params.tips){
+                                    first = suffeledData.slice(i, length) ;
+                                    second = suffeledData.slice(0, i ) ;
+                                    return;
+                                }
+                            })
+                            suffeledData = first.concat(second);
+                        }
+
                         currentIndex = 0;
+                        console.log(suffeledData);
+                        $('#MyContent').append(chalDataDe(suffeledData[0]));
+                        $.ajax({
+                            type: 'GET',
+                            url: 'https://raw.githubusercontent.com/harshyo/tips/master/TIPS-DEV.JSON',
+                            dataType: "json",
+                            async: false,
+                            success: function (data) {
+                                tips = data.data;
+                                console.log(JSON.stringify(data));
+                                localStorage.setItem("lifetips", JSON.stringify(data.data));
+                            }
+                        });
+
                     } else {
                         callKrDe();
                     }
@@ -116,31 +161,39 @@
             });
 
             $(window).scroll(function () {
-                console.log(currentIndex);
+                console.log(currentIndex +'---'+ suffeledData.length );
+
                 if (currentIndex > -1 && currentIndex < suffeledData.length && $(window).scrollTop() == $(document).height() - $(window).height()) {
-                    $('#MyContent').append(chalDataDe(suffeledData[currentIndex++]));
+                    $('#MyContent').append(chalDataDe(suffeledData[++currentIndex]));
                 }
             });
 
-            function AddMoreContent() {
-                $.post('getMoreContent.php', function (data) {
-                    //Assuming the returned data is pure HTML
-                    $(data).insertBefore($('#placeHolder'));
-                });
-            }
 
             function callKrDe() {
                 $.ajax({
                     type: 'GET',
-                    url: 'https://raw.githubusercontent.com/harshyo/tips/master/TIPS.JSON',
+                    url: 'https://raw.githubusercontent.com/harshyo/tips/master/TIPS-DEV.JSON',
                     dataType: "json",
                     async: false,
                     success: function (data) {
                         tips = data.data;
+                        console.log(JSON.stringify(data));
                         localStorage.setItem("lifetips", JSON.stringify(data.data));
                         suffeledData = shuffle(tips);
+                        if(params.tips){
+                            var length = suffeledData.length;
+                            var first;
+                            var second;
+                            suffeledData.forEach(function(data,i){
+                                if(data.url == params.tips){
+                                    first = suffeledData.slice(i, length) ;
+                                    second = suffeledData.slice(0, i ) ;
+                                    return;
+                                }
+                            });
+                            suffeledData = first.concat(second);
+                        }
                         $('#MyContent').append(chalDataDe(suffeledData[0]));
-
                     }
                 });
             }
