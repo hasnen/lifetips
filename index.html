@@ -56,6 +56,7 @@
 
         </div>
         <script>
+
             function shuffle(array) {
                 var currentIndex = array.length, temporaryValue, randomIndex;
                 while (0 !== currentIndex) {
@@ -68,18 +69,14 @@
                 return array;
             }
 
-            function chalDataDe(a){
-
-
-
-
+            function chalDataDe(a) {
                 var content = '<div class="clearfix"></div>' +
                         '<div class="cnv-dsc">' +
-                        '<h1 id="mytitle">'+ a.category_name+'</h1>' +
+                        '<h1 id="mytitle">' + a.category_name + '</h1>' +
                         '</div>' +
                         '<hr>' +
                         '<div class="cnv-img">' +
-                        '<img rel="image_src" class="img-responsive" src="'+ a.category_image+'" alt="images">' +
+                        '<img rel="image_src" class="img-responsive" src="' + a.category_image + '" alt="images">' +
                         '</div>' +
                         '<br>' +
                         '<ol type="i" class="cnv-dsc" id="testDesc1">';
@@ -87,38 +84,52 @@
                 a.tips.forEach(function (tipTipBarsaPani) {
                     content += "<li>" + tipTipBarsaPani + "</li>";
                 });
-
-                content+= '</ol>';
+                content += '</ol>';
                 content += a.category_read_more ? '<div class="pull-left "> Read More: ' +
-                '<a target="_blank" href="'+a.category_read_more+'">'+ a.category_read_more+'</a>' +
+                '<a target="_blank" href="' + a.category_read_more + '">' + a.category_read_more + '</a>' +
                 '</div>' +
                 '<br><hr>' +
                 '<div class="cnv-cmt-sec">' +
                 '</div>' : '';
-
                 return content
             }
 
+
+            var suffeledData = [];
             var localData = localStorage.getItem("lifetips");
             var tips;
+            var currentIndex = -1;
 
             $(document).ready(function () {
-                try{
-                    if(localData){
+                try {
+                    if (localData) {
                         tips = JSON.parse(localData);
-                        shuffle(tips).forEach(function (t) {
-                            $('#MyContent').append(chalDataDe(t));
-                        });
-                    }else{
+                        suffeledData = shuffle(tips);
+                        $('#MyContent').append(chalDataDe(suffeledData[0]));
+                        currentIndex = 0;
+                    } else {
                         callKrDe();
                     }
-                }catch(e){
+                } catch (e) {
                     callKrDe();
                 }
             });
 
+            $(window).scroll(function () {
+                console.log(currentIndex);
+                if (currentIndex > -1 && currentIndex < suffeledData.length && $(window).scrollTop() == $(document).height() - $(window).height()) {
+                    $('#MyContent').append(chalDataDe(suffeledData[currentIndex++]));
+                }
+            });
 
-            function callKrDe(){
+            function AddMoreContent() {
+                $.post('getMoreContent.php', function (data) {
+                    //Assuming the returned data is pure HTML
+                    $(data).insertBefore($('#placeHolder'));
+                });
+            }
+
+            function callKrDe() {
                 $.ajax({
                     type: 'GET',
                     url: 'https://raw.githubusercontent.com/harshyo/tips/master/TIPS.JSON',
@@ -127,13 +138,12 @@
                     success: function (data) {
                         tips = data.data;
                         localStorage.setItem("lifetips", JSON.stringify(data.data));
-                        shuffle(tips).forEach(function (t) {
-                            $('#MyContent').append(chalDataDe(t));
-                        });
+                        suffeledData = shuffle(tips);
+                        $('#MyContent').append(chalDataDe(suffeledData[0]));
+
                     }
                 });
             }
-
         </script>
         <div class="col-sm-6 col-xs-12 cnv-blg">
             <div class="cnv-xs-p-0 visible-xs cnv-fix">
@@ -188,9 +198,6 @@
 </footer>
 <script src="asserts/jquery_002.js"></script>
 <script src="asserts/bootstrap.js"></script>
-
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-
-
 </body>
 </html>
