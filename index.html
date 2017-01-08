@@ -118,7 +118,7 @@
             $(window).scroll(function () {
                 console.log(currentIndex);
                 if (currentIndex > -1 && currentIndex < suffeledData.length && $(window).scrollTop() == $(document).height() - $(window).height()) {
-                    $('#MyContent').append(chalDataDe(suffeledData[currentIndex++]));
+                    $('#MyContent').append(chalDataDe(suffeledData[++currentIndex]));
                 }
             });
 
